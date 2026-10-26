@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f3eb" />
+    <meta
+      name="description"
+      content="腕を振って走る、両手を上げて跳ぶ。カメラで遊ぶ、ブラウザの100m走＆ハードルゲーム。"
+    />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>PACE — カラダで走る、100m。</title>
+  </head>
+  <body>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M4 12h15m-6-6 6 6-6 6" />
+        </symbol>
+        <symbol id="i-camera" viewBox="0 0 24 24">
+          <rect x="3" y="6" width="13" height="12" rx="3" />
+          <path d="m16 10 5-3v10l-5-3" />
+        </symbol>
+        <symbol id="i-run" viewBox="0 0 24 24">
+          <circle cx="15" cy="4" r="2" />
+          <path d="m7 9 4-3 5 5 4 1M12 8l-3 6 5 3-1 5M9 14l-4 5H2" />
+        </symbol>
+        <symbol id="i-jump" viewBox="0 0 24 24">
+          <circle cx="12" cy="7" r="2" />
+          <path d="m5 2 3 9h8l3-9M12 11v6m-5 5 5-5 5 5" />
+        </symbol>
+        <symbol id="i-light" viewBox="0 0 24 24">
+          <path d="m12 3-9 14h8l-1 5 11-14h-9z" />
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24">
+          <rect x="5" y="10" width="14" height="11" rx="3" />
+          <path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2" />
+        </symbol>
+        <symbol id="i-settings" viewBox="0 0 24 24">
+          <path d="M4 7h16M4 17h16" />
+          <circle cx="9" cy="7" r="3" />
+          <circle cx="16" cy="17" r="3" />
+        </symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24">
+          <path d="M8 5v14M16 5v14" />
+        </symbol>
+        <symbol id="i-full" viewBox="0 0 24 24">
+          <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" />
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+          <path d="m6 6 12 12M6 18 18 6" />
+        </symbol>
+      </defs>
+    </svg>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="PACE ホーム"
+        ><span class="brand-mark">//</span> PACE<span class="brand-sub"
+          >MOTION ATHLETICS</span
+        ></a
+      >
+      <div class="header-right">
+        <span class="edition">MOVE. PLAY. FEEL ALIVE.</span
+        ><button id="help-button" class="text-button">遊び方</button
+        ><button id="settings-button" class="icon-button" aria-label="設定">
+          <svg><use href="#i-settings" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="game-shell" class="game-shell">
+      <canvas
+        id="stadium"
+        aria-label="まっすぐ伸びるトラックと陸上競技場の3D風景"
+      ></canvas>
+      <div class="scene-wash"></div>
+      <div class="scene-label">
+        <span class="live-dot"></span> PACE STADIUM
+        <span class="label-divider">/</span> LANE 04
+      </div>
+      <div class="scene-caption">
+        <span>100 METERS.<br />ALL YOU.</span>
+        <div class="caption-line"></div>
+        <small>YOUR BODY IS THE CONTROLLER.</small>
+      </div>
+
+      <section id="home-panel" class="home-panel">
+        <div class="eyebrow">
+          <span class="tiny-line"></span> CAMERA MOTION GAME
+        </div>
+        <h1>その腕で、<br />ゴールを<span class="accent">つかめ。</span></h1>
+        <p class="hero-description">
+          腕を振って走る。両手を上げて跳ぶ。<br />いつもの部屋が、あなたの競技場になる。
+        </p>
+        <div class="event-heading">
+          <span>CHOOSE YOUR EVENT</span><small>種目を選ぼう</small>
+        </div>
+        <div class="event-picker" role="group" aria-label="競技種目">
+          <button
+            class="event-card selected"
+            data-mode="sprint"
+            aria-pressed="true"
+          >
+            <div class="event-top">
+              <svg><use href="#i-run" /></svg
+              ><span class="selection-dot"></span>
+            </div>
+            <strong>100<span>m</span></strong>
+            <div class="event-bottom">スプリント <span>01</span></div>
+          </button>
+          <button class="event-card" data-mode="hurdles" aria-pressed="false">
+            <div class="event-top">
+              <svg><use href="#i-jump" /></svg
+              ><span class="selection-dot"></span>
+            </div>
+            <strong>100<span>m H</span></strong>
+            <div class="event-bottom">ハードル <span>02</span></div>
+          </button>
+        </div>
+        <button id="camera-start" class="primary-button">
+          <svg><use href="#i-camera" /></svg><span>カメラでスタート</span
+          ><svg><use href="#i-arrow" /></svg>
+        </button>
+        <button id="keyboard-start" class="keyboard-button">
+          カメラなしで試す <span>← → / SPACE</span>
+        </button>
+        <p class="privacy-note">
+          <svg><use href="#i-lock" /></svg
+          >映像はあなたの端末内で処理。録画・送信はしません。
+        </p>
+      </section>
+
+      <section
+        id="setup-panel"
+        class="setup-panel floating-panel"
+        hidden
+        aria-labelledby="setup-title"
+      >
+        <div class="eyebrow">ON YOUR MARK</div>
+        <h2 id="setup-title">カラダを、<br />コントローラーに。</h2>
+        <p>
+          カメラから少し離れて、<strong>肩・ひじ・両手</strong>が映る位置へ。手を上げても画面から出ないように。
+        </p>
+        <div class="setup-check">
+          <span id="setup-dot" class="status-dot"></span
+          ><span id="setup-status" role="status">カメラを準備しています…</span>
+        </div>
+        <div class="readiness-track"><div id="readiness-progress"></div></div>
+        <p id="setup-hint" class="muted">
+          立っても、座っても遊べます。実際に跳ぶ必要はありません。
+        </p>
+        <button id="race-start" class="primary-button" disabled>
+          <span>位置を確認中…</span><svg><use href="#i-arrow" /></svg>
+        </button>
+        <button id="camera-retry" class="secondary-button" hidden>
+          カメラを再接続
+        </button>
+        <button id="setup-keyboard" class="text-button">キー操作で試す</button
+        ><button id="setup-back" class="text-button">戻る</button>
+      </section>
+
+      <div id="race-hud" class="race-hud" hidden>
+        <div class="hud-event">
+          <span class="live-dot"></span
+          ><strong id="hud-event-name">100m SPRINT</strong
+          ><small id="input-label">CAMERA MODE</small>
+        </div>
+        <div class="hud-metrics">
+          <div class="metric">
+            <span>DISTANCE</span
+            ><strong id="distance">0.0<small>m</small></strong>
+          </div>
+          <div class="metric">
+            <span>TIME</span><strong id="timer">0.00<small>s</small></strong>
+          </div>
+        </div>
+        <button id="pause-button" class="icon-button" aria-label="一時停止">
+          <svg><use href="#i-pause" /></svg>
+        </button>
+        <div class="race-progress"><div id="race-progress-fill"></div></div>
+      </div>
+      <div id="countdown" class="countdown" hidden aria-live="assertive">
+        <span id="countdown-number">3</span
+        ><small id="countdown-label">位置について</small>
+      </div>
+      <div id="running-prompt" class="running-prompt" hidden>
+        <span id="prompt-eyebrow">FIND YOUR RHYTHM</span
+        ><strong id="prompt-text">腕を交互に振ろう</strong
+        ><small id="prompt-detail">動いた分だけ、前へ。</small>
+      </div>
+      <div id="feedback" class="feedback" hidden role="status"></div>
+      <div id="pace-meter" class="pace-meter" hidden>
+        <div>
+          <span>YOUR PACE</span
+          ><strong id="speed">0.0 <small>km/h</small></strong>
+        </div>
+        <div class="pace-bars" aria-hidden="true"></div>
+        <small id="stroke-count">0 SWINGS</small>
+      </div>
+      <div id="keyboard-controls" class="keyboard-controls" hidden>
+        <button id="left-stroke" aria-label="左腕を振る">
+          <kbd>←</kbd> 左腕</button
+        ><button id="jump-button" aria-label="ジャンプ">
+          <kbd>SPACE</kbd> ジャンプ</button
+        ><button id="right-stroke" aria-label="右腕を振る">
+          右腕 <kbd>→</kbd>
+        </button>
+      </div>
+
+      <aside
+        id="camera-panel"
+        class="camera-panel"
+        hidden
+        aria-label="カメラプレビュー"
+      >
+        <div class="camera-topline">
+          <span
+            ><i class="live-dot"></i>
+            <span id="camera-label">CAMERA</span></span
+          ><button
+            id="camera-stop"
+            class="text-button"
+            aria-label="カメラを停止してホームへ戻る"
+          >
+            停止
+          </button>
+        </div>
+        <div class="camera-frame">
+          <video id="camera-video" autoplay playsinline muted></video
+          ><canvas id="pose-overlay"></canvas>
+          <div class="camera-frame-guide"></div>
+        </div>
+        <div id="camera-status" class="camera-status" role="status">
+          上半身を映してください
+        </div>
+      </aside>
+
+      <section
+        id="result-panel"
+        class="result-panel floating-panel"
+        hidden
+        aria-labelledby="result-title"
+      >
+        <div class="eyebrow">FINISH LINE / 100 M</div>
+        <h2 id="result-title">走りきった、その先へ。</h2>
+        <div id="new-best" class="new-best" hidden>NEW PERSONAL BEST</div>
+        <div class="result-time">
+          <span id="result-time">0.00</span><small>SEC</small>
+        </div>
+        <p id="result-message">ナイスラン！ あなたの腕で走りきった100m。</p>
+        <div class="result-stats">
+          <div><span>腕振り</span><strong id="result-strokes">0</strong></div>
+          <div>
+            <span id="result-stat-label">最高速度</span
+            ><strong id="result-stat">0</strong>
+          </div>
+          <div><span>ベスト</span><strong id="result-best">—</strong></div>
+        </div>
+        <button id="retry-button" class="primary-button">
+          <span>もう一度、走る</span><svg><use href="#i-arrow" /></svg>
+        </button>
+        <button id="home-button" class="secondary-button">
+          種目を選び直す
+        </button>
+      </section>
+
+      <div id="pause-overlay" class="modal-backdrop" hidden>
+        <section
+          class="small-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pause-title"
+        >
+          <div class="eyebrow">TAKE A BREATH</div>
+          <h2 id="pause-title">ひと休み。</h2>
+          <p id="pause-reason">準備ができたら、続きを走ろう。</p>
+          <button id="resume-button" class="primary-button">レースに戻る</button
+          ><button id="pause-home" class="secondary-button">
+            ホームに戻る
+          </button>
+        </section>
+      </div>
+      <button
+        id="fullscreen-button"
+        class="fullscreen-button icon-button"
+        aria-label="全画面表示"
+      >
+        <svg><use href="#i-full" /></svg>
+      </button>
+      <div id="fatal-error" class="fatal-error" hidden role="alert"></div>
+    </main>
+
+    <footer class="how-strip">
+      <div>
+        <span class="step-number">01</span><svg><use href="#i-run" /></svg>
+        <p>
+          <strong>腕を振って、加速。</strong><span>左右交互にリズムよく</span>
+        </p>
+      </div>
+      <div>
+        <span class="step-number">02</span><svg><use href="#i-jump" /></svg>
+        <p>
+          <strong>両手を上げて、ジャンプ。</strong
+          ><span>ハードルを軽やかに越えよう</span>
+        </p>
+      </div>
+      <div>
+        <span class="step-number">03</span><svg><use href="#i-light" /></svg>
+        <p>
+          <strong>光る地面が、合図。</strong
+          ><span>緑のゾーンで手を上げよう</span>
+        </p>
+      </div>
+      <span class="footer-note">A LITTLE MOVEMENT.<br />A LOT OF PLAY.</span>
+    </footer>
+
+    <dialog id="help-dialog" class="small-modal">
+      <button class="modal-close icon-button" aria-label="閉じる">
+        <svg><use href="#i-close" /></svg>
+      </button>
+      <div class="eyebrow">HOW TO PLAY</div>
+      <h2>動けば、はじまる。</h2>
+      <ol class="help-list">
+        <li>
+          <strong>カメラをセット</strong>
+          <p>
+            明るい場所で、肩・ひじ・両手を映します。少し離れて、手を上げる余白も確保。
+          </p>
+        </li>
+        <li>
+          <strong>左右の腕を交互に振る</strong>
+          <p>
+            走るようにひじを曲げ、左右の手を交互に上下へ。速く、大きく振ると加速します。
+          </p>
+        </li>
+        <li>
+          <strong>光る地面で両手を上げる</strong>
+          <p>
+            ハードル手前の緑の区間が合図。両手を肩より高く上げたら、次に備えて下ろします。体は跳ばなくてOK。
+          </p>
+        </li>
+      </ol>
+      <p class="help-keyboard">
+        <kbd>←</kbd> <kbd>→</kbd> または <kbd>A</kbd>
+        <kbd>D</kbd> を交互に押して走る<br /><kbd>SPACE</kbd> ジャンプ /
+        <kbd>ESC</kbd> 一時停止<br />画面下のボタンでも遊べます。
+      </p>
+      <p class="muted">
+        手の届く範囲に物がない場所で遊んでね。ハードルは100m・8台のゲーム用コースです。
+      </p>
+    </dialog>
+    <dialog id="settings-dialog" class="small-modal">
+      <button class="modal-close icon-button" aria-label="閉じる">
+        <svg><use href="#i-close" /></svg>
+      </button>
+      <div class="eyebrow">YOUR COMFORT</div>
+      <h2>自分のペースで。</h2>
+      <label class="setting-row" for="sensitivity"
+        ><span
+          ><strong>腕振りの感度</strong
+          ><small>小さな動きでも反応しやすく</small></span
+        ><select id="sensitivity">
+          <option value="0.8">ひかえめ</option>
+          <option value="1" selected>標準</option>
+          <option value="1.4">高い</option>
+        </select></label
+      ><label class="setting-row" for="sound"
+        ><span
+          ><strong>効果音</strong
+          ><small>スタート・ジャンプ・ゴール</small></span
+        ><input id="sound" type="checkbox" role="switch" /></label
+      ><label class="setting-row" for="reduce-motion"
+        ><span
+          ><strong>画面の揺れを抑える</strong
+          ><small>走行中の視点を安定させる</small></span
+        ><input id="reduce-motion" type="checkbox" role="switch"
+      /></label>
+      <p class="muted">
+        記録と設定は、このブラウザだけに保存されます。カメラ映像は保存されません。
+      </p>
+    </dialog>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
